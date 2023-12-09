@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboards</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+th {
+    border: 3px solid;
+    width: 33%;
+    color: white;
+    border-color: gray;
+}
+
+tr {
+    border: 2px solid;
+    width: 33%;
+    color: lightgray;
+    border-color: gray;
+}
+
+td {
+    height: 30px;
+    border: 1px solid;
+    color: lightgray;
+    border-color: gray;
+}
+</style>
+<body onload="titleFetch(), leaderboardFetch()">
+    <a href="index.html">Link to view list of games</a><br>
+    <a href="addgame.html">Link to add a new game</a><br>
+    <br>
+    <div id="title">
+        <p></p>
+    </div>
+    <div id="gameList"></div>
+    <br>
+    <div id="addGame">
+            <button onclick="toAddScore()"><p>New Entry</p></button>
+    </div>
+    <br>
+</body>
+     <script>
+        function titleFetch(){
+            let search = window.location.search;
+            let actualQuerys = new URLSearchParams(search);
+            console.log(actualQuerys.get(`id`));
+            let gameId = actualQuerys.get(`id`);
+            var title = document.getElementById('title');
+            title.innerHTML = "";
+            var titleTag = "";
+            fetch("https://lime-faithful-hippo.cyclic.app/api/leaderBoard/" + gameId)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data.GameName);
+                titleTag += `<p>${data.GameName} Leaderboard</p>`;
+            })
+            .then(function() {
+                title.innerHTML += titleTag;
+            })
+        }
+        function leaderboardFetch(){
+            let search = window.location.search;
+            let actualQuerys = new URLSearchParams(search);
+            console.log(actualQuerys.get(`id`));
+            let gameId = actualQuerys.get(`id`);
+            var leaderTag = document.getElementById('gameList');
+            leaderTag.innerHTML = "";
+            var tableTag = "<table>";
+            var index = 0;
+                tableTag += `<tr>`
+                tableTag += `<th>Player</th>`;
+                tableTag += `<th>Score</th>`;
+                tableTag += `<th>Time</th>`;
+                tableTag += `</tr>`
+            fetch("https://lime-faithful-hippo.cyclic.app/api/leaderBoard/" + gameId)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data.Leaderboard);
+                data.Leaderboard.forEach(element => {
+                    tableTag += `<tr>`;
+                    tableTag += `<td hidden>${index}</td>`;
+                    tableTag += `<td>${element.Player}</td>`;
+                    tableTag += `<td>${element.Score}</td>`;
+                    tableTag += `<td>${element.Time}</td>`;
+                    tableTag += `</tr>`;
+                    index++;
+                })
+            })
+            .then(function() {
+                tableTag += `</table>`;
+                leaderTag.innerHTML += tableTag;
+            })
+        }
+        function toAddScore(){
+            let search = window.location.search;
+            let actualQuerys = new URLSearchParams(search);
+            console.log(actualQuerys.get(`id`));
+            let gameId = actualQuerys.get(`id`);
+            window.location.assign("addscore.html?id=" + gameId)
+        }
+    </script>
+</html>

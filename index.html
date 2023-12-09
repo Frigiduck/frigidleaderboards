@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+th {
+    border: 3px solid;
+    width: 50%;
+    color: white;
+    border-color: gray;
+}
+
+tr {
+    border: 2px solid;
+    width: 50%;
+    color: lightgray;
+    border-color: gray;
+}
+
+td {
+    height: 30px;
+    border: 1px solid;
+    color: lightgray;
+    border-color: gray;
+}
+</style>
+<body onload="gameFetch()">
+    <a href="index.html">Link to view list of games</a><br>
+    <a href="addgame.html">Link to add a new game</a><br>
+    <br>
+    <div id="title">
+        <p>Welcome to Frigid Leaderboards!</p>
+    </div>
+    <div id="gameList"></div>
+    <br>
+    <div id="addGame">
+        <a href="addgame.html">
+            <button><p>New Game</p></button>
+        </a>
+    </div>
+    <br>
+</body>
+     <script>
+        function gameFetch(){
+            var gameTag = document.getElementById('gameList');
+            gameTag.innerHTML = "";
+            var tableTag = "<table>";
+            var index = 0;
+                tableTag += `<tr>`
+                tableTag += `<th hidden></th>`;
+                tableTag += `<th>Game Name</th>`;
+                tableTag += `<th>Platform</th>`;
+                tableTag += `</tr>`
+            fetch("https://lime-faithful-hippo.cyclic.app/api/games")
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data);
+                data.forEach(element => {
+                    tableTag += `<tr>`;
+                    tableTag += `<td hidden>${index}</td>`;
+                    tableTag += `<td><a href="leaderboard.html?id=${element.id}">${element.GameName}</a></td>`;
+                    tableTag += `<td>${element.Platform}</td>`;
+                    tableTag += `</tr>`;
+                    index++;
+                })
+            })
+            .then(function() {
+                tableTag += `</table>`;
+                gameTag.innerHTML += tableTag;
+            })
+        }
+    </script>
+</html>

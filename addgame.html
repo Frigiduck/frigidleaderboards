@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="index.html">Link to view list of games</a><br>
+    <a href="addgame.html">Link to add a new game</a><br>
+    <br>
+    <div id="title">
+        <p>Add New Game</p>
+    </div>
+    <div id="addGameForm">
+        <form action="https://httpdump.app/dumps/7089523b-c61b-45c8-bb27-1b4e8435fdcb" method="post">
+            <label>Title:</label><br>
+            <input type="text" id="GameName" name="GameName"><br>
+            <br>
+            <label>Platform:</label><br>
+            <input type="text" id="Platform" name="Platform">
+            <br>
+            <br>
+            <div id="gameSubmit">
+                    <button id="submit" onclick="sendData()">
+                        <p>Submit</p>
+                    </button>
+            </div>
+          </form>
+    </div>
+    <br>
+</body>
+<script>
+function sendData()
+{
+    send();
+}
+    function send()
+    {
+        var GameName = document.getElementById('GameName').value;
+        var Platform = document.getElementById('Platform').value;
+        console.log(GameName);
+        console.log(Platform);
+        fetch("https://lime-faithful-hippo.cyclic.app/api/games",
+        {
+            method: "POST",
+            body: JSON.stringify({name:GameName,platform:Platform}),
+            headers: {"Content-Type": "application/json; charset=UTF-8"},
+        })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(responseResult) {
+                console.log(responseResult);
+                if (responseResult.message == 'OK') {
+                    alert("Game has been successfully submitted!");
+                    window.location.replace("index.html")
+                }
+                else {
+                    alert("Game could not be submitted for the following reason: " + responseResult.message);
+                    window.location.replace("addgame.html")
+                }
+            })
+            .catch((errorsReturned)=> {
+                console.error(errorsReturned);
+                if (errorsReturned)
+                {
+                    alert("Game could not be submitted for the following reason: " + errorsReturned);
+                    window.location.replace("addgame.html")
+                }
+            })
+    }
+</script>
+</html>

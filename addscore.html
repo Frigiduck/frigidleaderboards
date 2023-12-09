@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Score</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="CheckGameId()">
+    <a href="index.html">Link to view list of games</a><br>
+    <a href="addgame.html">Link to add a new game</a><br>
+    <br>
+    <div id="title">
+        <p>Add New Score</p>
+    </div>
+    <div id="addScoreForm">
+        <form action="https://httpdump.app/dumps/7089523b-c61b-45c8-bb27-1b4e8435fdcb" method="post">
+            <label>Player:</label><br>
+            <input type="text" id="Player" name="Player"><br>
+            <br>
+            <label>Score:</label><br>
+            <input type="text" id="Score" name="Score"><br>
+            <br>
+            <label>Time (hr:min:sec:ms):</label><br>
+            <input type="text" id="Time" name="Time"><br>
+            <br>
+            <br>
+            <div id="gameSubmit">
+                    <button id="submit" onclick="sendData()">
+                        <p>Submit</p>
+                    </button>
+            </div>
+          </form>
+    </div>
+    <br>
+</body>
+<script>
+    function CheckGameId()
+    {
+        let search = window.location.search;
+        let actualQuerys = new URLSearchParams(search);
+        console.log(actualQuerys.get(`id`));
+        let gameId = actualQuerys.get(`id`);
+    }
+    function sendData()
+    {
+        send();
+    }
+    function send()
+    {
+        let search = window.location.search;
+        let actualQuerys = new URLSearchParams(search);
+        var GameID = actualQuerys.get(`id`);
+        var Player = document.getElementById('Player').value;
+        var Score = document.getElementById('Score').value;
+        var Time = document.getElementById('Time').value;
+        if (Player == ''){
+            Player = 'null';
+        }
+        console.log(GameID);
+        console.log(Player);
+        console.log(Score);
+        console.log(Time);
+        fetch("https://lime-faithful-hippo.cyclic.app/api/leaderBoard/" + GameID,
+        {
+            method: "POST",
+            body: JSON.stringify({gameID:GameID,player:Player,score:Score,time:Time}),
+            headers: {"Content-Type": "application/json; charset=UTF-8"},
+        })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(responseResult) {
+                console.log(responseResult);
+                if (responseResult.message == 'ok') {
+                    alert("Player score and/or time has been successfully submitted!");
+                    var GameID = actualQuerys.get(`id`);
+                    console.log(GameID)
+                    window.location.replace("leaderboard.html?id=" + GameID)
+                }
+                else {
+                    alert("Player score and/or time could not be submitted for the following reason: " + responseResult.message);
+                    var GameID = actualQuerys.get(`id`);
+                    console.log(GameID)
+                    window.location.replace("addscore.html?id=" + GameID)
+                }
+            })
+            .catch((errorsReturned)=> {
+                console.error(errorsReturned);
+                if (errorsReturned)
+                {
+                    alert("Player score and/or time could not be submitted for the following reason: " + errorsReturned);
+                    var GameID = actualQuerys.get(`id`);
+                    console.log(GameID)
+                    window.location.replace("addscore.html?id=" + GameID)
+                }
+            })
+    }
+</script>
+</html>
